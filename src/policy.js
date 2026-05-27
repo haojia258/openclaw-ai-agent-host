@@ -88,7 +88,7 @@ function validateCommand(command, mode, agent) {
   for (const pattern of BLOCKED_PATTERNS) {
     if (pattern.test(cmd)) {
       // If it matches a blocked pattern, check if it's an allowed command
-      if (ALLOWED_COMMANDS.includes(cmd)) {
+      if (ALLOWED_COMMANDS.some(prefix => cmd === prefix || cmd.startsWith(prefix + ' '))) {
         break; // explicitly allowed
       }
       return { valid: false, error: `命令 "${cmd}" 被策略禁止` };

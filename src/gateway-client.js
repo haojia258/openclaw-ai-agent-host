@@ -3,7 +3,7 @@
  *
  * Calls POST /gateway/command with:
  *  - Auto-generated requestId (UUID)
- *  - Auto-filled timestamp (ISO 8601)
+ *  - Auto-filled timestamp (Unix ms)
  *  - GATEWAY_TOKEN from env
  *  - Correlation ID for tracing
  *  - Retry up to MAX_RETRIES times
@@ -38,12 +38,14 @@ function getGatewayConfig() {
  * @param {string} correlationId
  * @returns {object}
  */
-function buildRequestBody(command, mode, agent, correlationId) {
+function buildRequestBody(command, mode, agent, correlationId, user, source) {
   return {
     requestId: uuidv4(),
-    timestamp: new Date().toISOString(),
+    timestamp: Date.now(),
     command,
     mode,
+    user: user || "",
+    source: source || "unknown",
     ...(agent ? { agent } : {}),
   };
 }
@@ -134,10 +136,10 @@ function makeRequest(urlParts, token, body, correlationId) {
  * @param {function} onRetry - callback(retryNumber, error) for each retry
  * @returns {Promise<{ success: boolean, statusCode?: number, body?: object, error?: string, attempts: number }>}
  */
-async function callGateway(command, mode, agent, correlationId, onRetry) {
+async function callGateway(command, mode, agent, correlationId, onRetry, user, source) {
   const { url, token } = getGatewayConfig();
   const urlParts = parseUrl(url);
-  const body = buildRequestBody(command, mode, agent, correlationId);
+  const body = buildRequestBody(command, mode, agent, correlationId, user, source);
 
   for (let attempt = 1; attempt <= MAX_RETRIES + 1; attempt++) {
     try {

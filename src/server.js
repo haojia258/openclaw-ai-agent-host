@@ -1,3 +1,4 @@
+require("dotenv").config();
 /**
  * server.js - Agent Host Runtime v1
  *
@@ -47,7 +48,7 @@ app.post('/tasks', async (req, res) => {
   const correlationId = req.correlationId;
 
   // 1. Validate request body
-  const { command, mode, agent } = req.body || {};
+  const { command, mode, agent, user, source } = req.body || {};
   if (!command) {
     await auditLog.log({
       event: 'TASK_REJECTED',
@@ -122,6 +123,8 @@ app.post('/tasks', async (req, res) => {
         meta: { retryNum, error: errMsg },
       }).catch(() => {});
     },
+    user || "unknown",
+    source || "unknown",
   );
 
   // 6. Handle result
