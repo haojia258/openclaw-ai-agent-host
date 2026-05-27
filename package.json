@@ -1,0 +1,18 @@
+{
+  "name": "openclaw-ai-agent-host",
+  "version": "1.0.0",
+  "description": "P8.2 Agent Host Runtime v1 - Standalone agent host for receiving tasks and forwarding to wecom-openclaw Gateway",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node tests/test-agent-host.cjs",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": ["openclaw", "agent-host", "gateway", "wecom"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {}
+}
